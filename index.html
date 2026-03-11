@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Demo - Amplitude Tracking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Analytics Demo</div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Track User Behavior, Drive Growth</h1>
+            <p class="subtitle">Understand how users interact with your product in real-time</p>
+            
+            <!-- CTA Buttons -->
+            <div class="cta-buttons">
+                <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+                <button class="btn btn-secondary" id="demoBtn">Request Demo</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Description -->
+    <section class="description">
+        <div class="container">
+            <h2>Why Choose Our Analytics Platform?</h2>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <h3>Real-time Analytics</h3>
+                    <p>Track user events as they happen and get instant insights into user behavior patterns.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Conversion Funnels</h3>
+                    <p>Identify bottlenecks in your user journey and optimize for better conversion rates.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Easy Integration</h3>
+                    <p>Simple SDK integration with minimal setup required to start tracking user events.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sign Up Form (Hidden by default) -->
+    <section class="form-section" id="formSection" style="display: none;">
+        <div class="form-container">
+            <h3>Sign Up for Updates</h3>
+            <form id="emailForm">
+                <input 
+                    type="email" 
+                    id="emailInput" 
+                    placeholder="Enter your email" 
+                    required
+                >
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Confirmation Message -->
+    <div class="modal" id="confirmationModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-icon">✓</div>
+            <h2 id="confirmationTitle">Success!</h2>
+            <p id="confirmationMessage">Thank you for your interest. We'll be in touch soon.</p>
+            <button class="btn btn-primary" id="closeBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Amplitude SDK -->
+    <script src="https://cdn.amplitude.com/libs/amplitude-8.22.0-umd.min.js"></script>
+    
+    <!-- Our Script -->
+    <script src="script.js"></script>
+</body>
+</html>
