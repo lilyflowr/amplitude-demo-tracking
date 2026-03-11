@@ -243,6 +243,10 @@ body {
     z-index: 1000;
 }
 
+.modal.hidden {
+    display: none;
+}
+
 .modal-content {
     background: white;
     padding: 3rem;
@@ -251,6 +255,37 @@ body {
     max-width: 400px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.3s ease-out;
+}
+
+.modal-content h2 {
+    color: #1e40af;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.modal-content input {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 100%;
+    transition: border-color 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.modal-content input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modal-content button {
+    width: 100%;
+    margin-bottom: 0.75rem;
+}
+
+.modal-content button:last-child {
+    margin-bottom: 0;
 }
 
 @keyframes slideUp {

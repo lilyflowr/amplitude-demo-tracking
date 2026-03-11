@@ -1,5 +1,5 @@
 // ============================================
-// AMPLITUDE INITIALIZATION
+// AMPLITUDE INITIALIZATION (BEFORE DOM LOAD)
 // ============================================
 
 /**
@@ -38,179 +38,224 @@ console.log('Analytics Tracking Initialized');
 console.log('User ID:', userId);
 
 // ============================================
-// SCROLL DEPTH TRACKING
+// DOM CONTENT LOADED
 // ============================================
 
-/**
- * Track scroll depth - fires once when user scrolls to 50% of page height
- */
-let scrollDepth50Tracked = false;
+document.addEventListener('DOMContentLoaded', function() {
 
-window.addEventListener('scroll', function() {
-    if (scrollDepth50Tracked) return;
+    // ============================================
+    // CREATE SIGNUP MODAL DYNAMICALLY
+    // ============================================
 
-    // Calculate scroll depth percentage
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-    const scrollPercent = Math.round((scrollTop / (documentHeight - windowHeight)) * 100);
+    /**
+     * Create the signup modal if it doesn't exist
+     */
+    function createSignupModal() {
+        // Check if modal already exists
+        if (document.getElementById('signupModal')) {
+            return;
+        }
 
-    // Track event when user reaches 50% scroll depth
-    if (scrollPercent >= 50) {
-        amplitude.track('Scroll Depth Reached', {
-            scroll_percent: 50,
-            page_name: 'Demo Landing Page'
-        });
-        scrollDepth50Tracked = true;
+        const modalHTML = `
+            <div id="signupModal" class="modal hidden">
+                <div class="modal-content">
+                    <h2>Sign Up</h2>
+                    <input type="email" id="emailInput" placeholder="Enter your email" required />
+                    <button id="submitEmail" class="btn btn-primary">Submit</button>
+                    <button id="closeModal" class="btn btn-secondary">Close</button>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
     }
-});
 
-// ============================================
-// TRACK PAGE VIEWED EVENT
-// ============================================
+    // Create the modal
+    createSignupModal();
 
-/**
- * Track when a visitor loads the landing page
- * Includes event properties: page_name and cta_location
- */
-function trackPageViewed() {
+    // ============================================
+    // DOM ELEMENTS
+    // ============================================
+
+    const signupBtn = document.getElementById('signupBtn');
+    const demoBtn = document.getElementById('demoBtn');
+    const signupModal = document.getElementById('signupModal');
+    const emailInput = document.getElementById('emailInput');
+    const submitEmailBtn = document.getElementById('submitEmail');
+    const closeModalBtn = document.getElementById('closeModal');
+
+    // ============================================
+    // EMAIL VALIDATION FUNCTION
+    // ============================================
+
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    // ============================================
+    // MODAL FUNCTIONS
+    // ============================================
+
+    function openSignupModal() {
+        signupModal.classList.remove('hidden');
+        emailInput.focus();
+    }
+
+    function closeSignupModal() {
+        signupModal.classList.add('hidden');
+        emailInput.value = '';
+    }
+
+    // ============================================
+    // SIGN UP BUTTON CLICK HANDLER
+    // ============================================
+    /**
+     * Event: User clicked the Sign Up button
+     */
+    signupBtn.addEventListener('click', function() {
+        amplitude.track('Sign Up Clicked', {
+            page_name: 'Demo Landing Page',
+            cta_location: 'hero_section'
+        });
+
+        openSignupModal();
+    });
+
+    // ============================================
+    // REQUEST DEMO BUTTON CLICK HANDLER
+    // ============================================
+    /**
+     * Event: User clicked the Request Demo button
+     */
+    demoBtn.addEventListener('click', function() {
+        amplitude.track('Request Demo Clicked', {
+            page_name: 'Demo Landing Page',
+            cta_location: 'hero_section'
+        });
+
+        showDemoConfirmation();
+    });
+
+    // ============================================
+    // SIGNUP MODAL CLOSE HANDLERS
+    // ============================================
+
+    // Close modal when close button is clicked
+    closeModalBtn.addEventListener('click', closeSignupModal);
+
+    // Close modal when clicking outside the modal content
+    signupModal.addEventListener('click', function(e) {
+        if (e.target === signupModal) {
+            closeSignupModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !signupModal.classList.contains('hidden')) {
+            closeSignupModal();
+        }
+    });
+
+    // ============================================
+    // EMAIL FORM SUBMISSION HANDLER
+    // ============================================
+    /**
+     * Event: User submitted their email for signup
+     */
+    submitEmailBtn.addEventListener('click', function() {
+        const email = emailInput.value.trim();
+
+        // Validate email format
+        if (!isValidEmail(email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
+        // Track event with email submission
+        amplitude.track('Email Submitted', {
+            page_name: 'Demo Landing Page',
+            cta_location: 'hero_section'
+        });
+
+        // Show success message
+        showSuccessConfirmation();
+
+        // Close modal
+        closeSignupModal();
+    });
+
+    // ============================================
+    // CONFIRMATION MESSAGE HANDLER
+    // ============================================
+
+    function showDemoConfirmation() {
+        const message = document.createElement('div');
+        message.className = 'demo-confirmation';
+        message.textContent = 'Demo request received. Our team will contact you.';
+        message.style.cssText = `
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            text-align: center;
+            animation: slideInUp 0.3s ease-out;
+        `;
+
+        const demoSection = demoBtn.closest('section') || demoBtn.parentElement;
+        demoSection.insertAdjacentElement('afterend', message);
+
+        // Remove message after 5 seconds
+        setTimeout(function() {
+            message.remove();
+        }, 5000);
+    }
+
+    function showSuccessConfirmation() {
+        alert('Thanks for signing up!');
+    }
+
+    // ============================================
+    // TRACK PAGE VIEWED EVENT
+    // ============================================
+    /**
+     * Track when a visitor loads the landing page
+     * Includes event properties: page_name and cta_location
+     */
     amplitude.track('Page Viewed', {
         page_name: 'Demo Landing Page',
         cta_location: 'hero_section'
     });
-}
 
-// Track page view when DOM is ready
-document.addEventListener('DOMContentLoaded', trackPageViewed);
-
-// ============================================
-// DOM ELEMENTS
-// ============================================
-
-const signupBtn = document.getElementById('signupBtn');
-const demoBtn = document.getElementById('demoBtn');
-const formSection = document.getElementById('formSection');
-const emailForm = document.getElementById('emailForm');
-const emailInput = document.getElementById('emailInput');
-const confirmationModal = document.getElementById('confirmationModal');
-const confirmationTitle = document.getElementById('confirmationTitle');
-const confirmationMessage = document.getElementById('confirmationMessage');
-const closeBtn = document.getElementById('closeBtn');
-
-// ============================================
-// EMAIL VALIDATION FUNCTION
-// ============================================
-
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// ============================================
-// SIGN============================================
-    // TRACK SIGN UP CLICKED EVENT
     // ============================================
-    // Event: User clicked the Sign Up buttonCLICK HANDLER
-// ============================================
+    // SCROLL DEPTH TRACKING
+    // ============================================
 
-signupBtn.addEventListener('click', function() {
-    // Track event
-    amplitude.track('Sign Up Clicked', {
-        page_name: 'Demo Landing Page',
-        cta_location: 'hero_section'
+    /**
+     * Track scroll depth - fires once when user scrolls to 50% of page height
+     */
+    let scrollDepth50Tracked = false;
+
+    window.addEventListener('scroll', function() {
+        if (scrollDepth50Tracked) return;
+
+        // Calculate scroll depth percentage
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        const scrollPercent = Math.round((scrollTop / (documentHeight - windowHeight)) * 100);
+
+        // Track event when user reaches 50% scroll depth
+        if (scrollPercent >= 50) {
+            amplitude.track('Scroll Depth Reached', {
+                scroll_percent: 50,
+                page_name: 'Demo Landing Page'
+            });
+            scrollDepth50Tracked = true;
+        }
     });
 
-    // Show form section
-    formSection.style.display = 'block';
-    
-    // Scroll to form
-    setTimeout(function() {
-        formSection.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-});
-
-// ============================================
-// REQUEST DEMO BUTTON CLICK HANDLER
-// ================================================
-    // TRACK REQUEST DEMO CLICKED EVENT
-    // ============================================
-    // Event: User clicked the Request Demo button=============================
-
-demoBtn.addEventListener('click', function() {
-    // Track event
-    amplitude.track('Request Demo Clicked', {
-        page_name: 'Demo Landing Page',
-        cta_location: 'hero_section'
-    });
-
-    // Show confirmation modal
-    showConfirmation('Demo Request Received', 'Demo request received. Our team will contact you.');
-});
-
-// ============================================
-// EMAIL FORM SUBMISSION HANDLER
-// ============================================
-
-emailForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const email = emailInput.value.trim();
-
-    // ============================================
-    // TRACK EMAIL SUBMITTED EVENT
-    // ============================================
-    // Event: User submitted their email for signup
-    amplitude.track('Email Submitted', {
-        page_name: 'Demo Landing Page',
-        cta_location: 'hero_section'
-
-    // Track event with email submission
-    amplitude.track('Email Submitted', {
-        page_name: 'Demo Landing Page',
-        cta_location: 'hero_section',
-        email: email
-    });
-
-    // Show confirmation modal
-    showConfirmation('Thanks for signing up!', '');
-
-    // Reset form
-    emailForm.reset();
-    formSection.style.display = 'none';
-});
-
-// ============================================
-// CONFIRMATION MODAL HANDLER
-// ============================================
-
-function showConfirmation(title, message) {
-    confirmationTitle.textContent = title;
-    confirmationMessage.textContent = message;
-    confirmationModal.style.display = 'flex';
-
-    // Scroll to modal
-    document.body.style.overflow = 'hidden';
-}
-
-function closeConfirmation() {
-    confirmationModal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
-// Close modal when close button is clicked
-closeBtn.addEventListener('click', closeConfirmation);
-
-// Close modal when clicking outside the modal content
-confirmationModal.addEventListener('click', function(e) {
-    if (e.target === confirmationModal) {
-        closeConfirmation();
-    }
-});
-
-// 
-// ============================================
-
-console.log('Analytics Tracking Initialized');
-console.log('User ID:', userId);
-console.log('Amplitude API Key:', AMPLITUDE_API_KEY === 'd1a9600a9ea214d1820e6c28c54e3d0f' ? 'NOT SET' : 'SET');
+}); // END DOMContentLoaded
