@@ -3,5 +3,5 @@
 // ============================================
 
 window.APP_CONFIG = {
-    AMPLITUDE_API_KEY: "d1a9600a9ea214d1820e6c28c54e3d0f"
+    AMPLITUDE_API_KEY: "4f7e54b25f63bed864355272020bcbd8"
 };
